@@ -260,7 +260,7 @@ const PublishingPanel: React.FC<PublishingPanelProps> = ({ students, subjects, g
       {/* Comment Edit Modal */}
       {editingCommentGradeId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <h3 className="font-bold text-slate-800 flex items-center gap-2">
                         <MessageSquare className="w-5 h-5 text-indigo-500" />
