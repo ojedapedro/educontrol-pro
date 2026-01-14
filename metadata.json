@@ -1,0 +1,5 @@
+{
+  "name": "EduControl Pro",
+  "description": "Sistema de gestión académica integral para niveles de primaria y secundaria, permitiendo el registro de calificaciones, gestión de materias y generación de reportes estudiantiles.",
+  "requestFramePermissions": []
+}
