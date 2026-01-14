@@ -1,8 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { GradeRecord, Subject } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export const generateStudentReport = async (
   studentName: string,
   level: string,
@@ -11,6 +9,9 @@ export const generateStudentReport = async (
   subjects: Subject[]
 ): Promise<string> => {
   try {
+    // Initialization moved here to prevent app crash on load if API_KEY is missing or invalid
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    
     const subjectMap = new Map(subjects.map(s => [s.id, s.name]));
     
     let gradeSummary = "Calificaciones:\n";
@@ -48,6 +49,6 @@ export const generateStudentReport = async (
     return response.text || "No se pudo generar el reporte.";
   } catch (error) {
     console.error("Error generating report:", error);
-    return "Error al conectar con el servicio de análisis inteligente.";
+    return "Servicio de análisis no disponible en este momento. Verifique la configuración.";
   }
 };

@@ -12,7 +12,8 @@ import TopBar from './components/TopBar';
 import { Menu } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [data, setData] = useState<AppState>(getInitialData());
+  // Use lazy initialization for state to prevent reading localStorage on every render
+  const [data, setData] = useState<AppState>(() => getInitialData());
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   
