@@ -1,7 +1,12 @@
 import { AppState, GradeRecord, Student, Subject } from '../types';
 import { INITIAL_STUDENTS, INITIAL_SUBJECTS } from '../constants';
 
-const STORAGE_KEY = 'educontrol_data_v2';
+const STORAGE_KEY = 'educontrol_data_v3'; // Changed key to force reset if needed
+
+// Helper to validate if an object has basic required fields
+const isValidStudent = (s: any): s is Student => s && typeof s.id === 'string' && typeof s.name === 'string';
+const isValidSubject = (s: any): s is Subject => s && typeof s.id === 'string' && typeof s.name === 'string';
+const isValidGrade = (g: any): g is GradeRecord => g && typeof g.studentId === 'string' && typeof g.score === 'number';
 
 export const getInitialData = (): AppState => {
   try {
@@ -9,12 +14,25 @@ export const getInitialData = (): AppState => {
       if (stored) {
         const parsed = JSON.parse(stored);
         
-        // Robustness checks: Ensure all arrays exist to prevent map/filter crashes
-        // If local storage has old or corrupt data, we fallback to defaults for missing parts
+        // Strict Validation: If data inside arrays is corrupt (null or wrong shape), filter it out
+        // or fallback to defaults if the array itself is missing.
+        const students = Array.isArray(parsed.students) 
+            ? parsed.students.filter(isValidStudent) 
+            : INITIAL_STUDENTS;
+
+        const subjects = Array.isArray(parsed.subjects) 
+            ? parsed.subjects.filter(isValidSubject) 
+            : INITIAL_SUBJECTS;
+
+        const grades = Array.isArray(parsed.grades) 
+            ? parsed.grades.filter(isValidGrade) 
+            : [];
+
+        // If validation stripped out all students (e.g. empty array caused by bug), restore defaults
         return {
-            students: Array.isArray(parsed.students) ? parsed.students : INITIAL_STUDENTS,
-            subjects: Array.isArray(parsed.subjects) ? parsed.subjects : INITIAL_SUBJECTS,
-            grades: Array.isArray(parsed.grades) ? parsed.grades : [],
+            students: students.length > 0 ? students : INITIAL_STUDENTS,
+            subjects: subjects.length > 0 ? subjects : INITIAL_SUBJECTS,
+            grades: grades,
             currentUser: parsed.currentUser || null
         };
       }
