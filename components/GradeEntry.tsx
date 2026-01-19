@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Student, Subject, GradeRecord, Level } from '../types';
 import { GRADES_PRIMARIA, GRADES_SECUNDARIA } from '../constants';
 import { getGradeLabel } from '../services/dataService';
-import { User, Search, AlertCircle } from 'lucide-react';
+import { User, Search, AlertCircle, AlertTriangle } from 'lucide-react';
 
 interface GradeEntryProps {
   students: Student[];
@@ -16,6 +16,15 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
   const [gradeYear, setGradeYear] = useState<number>(1);
   const [subjectId, setSubjectId] = useState<string>('');
   const [period, setPeriod] = useState<1 | 2 | 3>(1);
+
+  // Local state to track inputs while typing allows us to show invalid states
+  // without committing them to the global store immediately if they are wrong.
+  const [localInputs, setLocalInputs] = useState<Record<string, string>>({});
+
+  // Reset local inputs when context changes to avoid stale data visibility
+  useEffect(() => {
+    setLocalInputs({});
+  }, [level, gradeYear, subjectId, period]);
 
   // Filter students based on selection
   const filteredStudents = useMemo(() => 
@@ -38,26 +47,45 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
 
   const handleScoreChange = (studentId: string, value: string) => {
     if (!subjectId) return;
+
+    // 1. Update local UI state immediately so the user sees what they type
+    setLocalInputs(prev => ({ ...prev, [studentId]: value }));
+    
+    // 2. Allow clearing the grade
+    if (value === '') {
+        // Find existing to preserve ID if needed, though for deletion/clearing we might handle differently.
+        // For now, we update it to 0 or we could add a logic to remove it. 
+        // Here we won't trigger update on empty string to avoid "0" popping up, 
+        // or we could save a special value. Let's assume empty string doesn't save/delete yet 
+        // OR we interpret empty as "remove grade". For safety, let's just return and keep it local.
+        return; 
+    }
     
     const numValue = parseFloat(value);
-    if (isNaN(numValue) || numValue < 0 || numValue > 20) return; // Scale 0-20
+    
+    // 3. Validation Logic
+    const isValid = !isNaN(numValue) && numValue >= 0 && numValue <= 20;
 
-    // Find existing grade record
-    const existingGrade = grades.find(
-      g => g.studentId === studentId && g.subjectId === subjectId && g.period === period
-    );
+    // 4. Only Save to Global Store if Valid
+    if (isValid) {
+        // Find existing grade record
+        const existingGrade = grades.find(
+          g => g.studentId === studentId && g.subjectId === subjectId && g.period === period
+        );
 
-    const newGrade: GradeRecord = {
-      id: existingGrade ? existingGrade.id : Math.random().toString(36),
-      studentId,
-      subjectId,
-      score: numValue,
-      period,
-      // If it exists, keep publish status, otherwise default to false (draft)
-      isPublished: existingGrade ? existingGrade.isPublished : false
-    };
+        const newGrade: GradeRecord = {
+          id: existingGrade ? existingGrade.id : Math.random().toString(36),
+          studentId,
+          subjectId,
+          score: numValue,
+          period,
+          // If it exists, keep publish status, otherwise default to false (draft)
+          isPublished: existingGrade ? existingGrade.isPublished : false
+        };
 
-    onUpdateGrade(newGrade);
+        onUpdateGrade(newGrade);
+    }
+    // If invalid, we do nothing (the localInputs state keeps the bad value visible and red)
   };
 
   const getStudentGrade = (studentId: string) => {
@@ -168,8 +196,32 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
                     <tbody className="divide-y divide-slate-100">
                         {filteredStudents.map(student => {
                             const gradeRecord = getStudentGrade(student.id);
-                            const score = gradeRecord ? gradeRecord.score : '';
+                            
+                            // Determine the value to show: Local typing state > Saved state > Empty
+                            const inputValue = localInputs[student.id] !== undefined 
+                                ? localInputs[student.id] 
+                                : (gradeRecord ? String(gradeRecord.score) : '');
+                                
                             const isPublished = gradeRecord?.isPublished || false;
+                            
+                            // Validation Check for Styling
+                            const numVal = parseFloat(inputValue);
+                            const isValid = inputValue === '' || (!isNaN(numVal) && numVal >= 0 && numVal <= 20);
+                            
+                            // Determine styles based on value and validity
+                            let inputClasses = "w-24 pl-3 pr-2 py-2 border rounded-lg focus:ring-2 focus:outline-none transition font-mono ";
+                            
+                            if (!isValid) {
+                                inputClasses += "border-red-500 ring-2 ring-red-100 bg-red-50 text-red-900";
+                            } else if (isPublished) {
+                                inputClasses += "border-slate-300 opacity-70 bg-slate-100 cursor-not-allowed";
+                            } else if (numVal >= 10) {
+                                inputClasses += "border-green-300 text-green-700 bg-green-50 focus:ring-green-200 focus:border-green-500";
+                            } else if (inputValue !== '') {
+                                inputClasses += "border-red-300 text-red-700 bg-red-50 focus:ring-red-200 focus:border-red-500";
+                            } else {
+                                inputClasses += "border-slate-300 focus:ring-indigo-500 focus:border-indigo-500";
+                            }
 
                             return (
                                 <tr key={student.id} className="hover:bg-slate-50/80 transition">
@@ -177,23 +229,24 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
                                     <td className="px-6 py-4">
                                         <div className="relative">
                                             <input 
-                                                type="number" 
-                                                min="0" 
-                                                max="20"
-                                                className={`w-24 pl-3 pr-2 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition font-mono ${
-                                                    Number(score) >= 10 ? 'border-green-300 text-green-700 bg-green-50' : 
-                                                    score === '' ? 'border-slate-300' : 'border-red-300 text-red-700 bg-red-50'
-                                                } ${isPublished ? 'opacity-70 bg-slate-100 cursor-not-allowed' : ''}`}
+                                                type="text" 
+                                                className={inputClasses}
                                                 placeholder="-"
-                                                value={score}
+                                                value={inputValue}
                                                 onChange={(e) => handleScoreChange(student.id, e.target.value)}
                                                 readOnly={isPublished}
-                                                title={isPublished ? "Esta nota ya ha sido publicada por Control de Estudios y no se puede editar" : "Editar nota"}
+                                                title={!isValid ? "El valor debe estar entre 0 y 20" : isPublished ? "Nota publicada, no editable" : "Ingresar nota 0-20"}
                                             />
+                                            {!isValid && (
+                                                <div className="absolute left-0 -bottom-5 text-[10px] text-red-600 font-bold flex items-center gap-1">
+                                                    <AlertTriangle className="w-3 h-3" />
+                                                    Inválido (0-20)
+                                                </div>
+                                            )}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        {score !== '' ? (
+                                        {gradeRecord ? (
                                             isPublished ? (
                                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                                     Publicada
@@ -208,11 +261,11 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {score !== '' ? (
+                                        {inputValue !== '' && isValid ? (
                                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                 Number(score) >= 10 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                 Number(inputValue) >= 10 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                              }`}>
-                                                 {Number(score) >= 10 ? 'Aprobado' : 'Reprobado'}
+                                                 {Number(inputValue) >= 10 ? 'Aprobado' : 'Reprobado'}
                                              </span>
                                         ) : (
                                             <span className="text-slate-400 text-xs italic">Pendiente</span>

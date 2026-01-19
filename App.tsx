@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ViewState, AppState, GradeRecord, Subject, User } from './types';
-import { getInitialData, saveData } from './services/dataService';
+import { getInitialData, saveDataLocally, fetchFromGoogleSheets, saveToGoogleSheets, getGradeLabel } from './services/dataService';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import GradeEntry from './components/GradeEntry';
@@ -9,20 +9,64 @@ import Reports from './components/Reports';
 import PublishingPanel from './components/PublishingPanel';
 import Login from './components/Login';
 import TopBar from './components/TopBar';
-import { Menu } from 'lucide-react';
+import { Menu, RefreshCw, CloudOff } from 'lucide-react';
+import { GOOGLE_SHEETS_API_URL } from './constants';
 
 const App: React.FC = () => {
-  // Use lazy initialization for state to prevent reading localStorage on every render
+  // 1. Load Local Data first (Instant UI)
   const [data, setData] = useState<AppState>(() => getInitialData());
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   
-  // State lifted from Reports to App to support Global Search
+  // Loading & Sync States
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncError, setSyncError] = useState(false);
+
+  // State lifted from Reports
   const [selectedStudentId, setSelectedStudentId] = useState<string>('');
 
-  // Persist data
+  // Initial Data Fetch from Google Sheets
   useEffect(() => {
-    saveData(data);
+    const initData = async () => {
+        if (!GOOGLE_SHEETS_API_URL) return;
+        
+        setIsLoading(true);
+        const cloudData = await fetchFromGoogleSheets();
+        
+        if (cloudData) {
+            setData(prev => ({
+                ...prev,
+                students: cloudData.students?.length ? cloudData.students : prev.students,
+                subjects: cloudData.subjects?.length ? cloudData.subjects : prev.subjects,
+                grades: cloudData.grades || prev.grades
+            }));
+            setSyncError(false);
+        } else {
+            setSyncError(true);
+        }
+        setIsLoading(false);
+    };
+
+    initData();
+  }, []);
+
+  // Persist data (Local + Cloud Debounced)
+  useEffect(() => {
+    // Always save local instantly
+    saveDataLocally(data);
+
+    // Debounce cloud save (2 seconds) to avoid spamming the sheet
+    if (!GOOGLE_SHEETS_API_URL) return;
+
+    const timeoutId = setTimeout(() => {
+        setIsSyncing(true);
+        saveToGoogleSheets(data).finally(() => {
+            setIsSyncing(false);
+        });
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
   }, [data]);
 
   const handleUpdateGrade = (newGrade: GradeRecord) => {
@@ -112,6 +156,24 @@ const App: React.FC = () => {
             onSelectStudent={handleGlobalSearchSelect}
             currentUser={data.currentUser}
         />
+
+        {/* Sync Status Bar */}
+        {(isSyncing || syncError || isLoading) && (
+             <div className={`px-8 py-1 text-xs font-medium flex items-center justify-end gap-2 ${
+                 syncError ? 'bg-red-100 text-red-700' : 'bg-indigo-50 text-indigo-700'
+             }`}>
+                {isLoading && <>Cargando datos de la nube...</>}
+                {isSyncing && <><RefreshCw className="w-3 h-3 animate-spin"/> Guardando en Google Sheets...</>}
+                {syncError && <><CloudOff className="w-3 h-3"/> Sin conexión a la BD. Trabajando localmente.</>}
+             </div>
+        )}
+
+        {/* Warning if URL is missing */}
+        {!GOOGLE_SHEETS_API_URL && !isLoading && (
+            <div className="bg-amber-100 text-amber-800 px-8 py-2 text-xs text-center border-b border-amber-200">
+                ⚠️ Modo Demo Local: Configure la URL de la API en <code>constants.ts</code> para conectar con Google Sheets.
+            </div>
+        )}
 
         <main className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
            {currentView === 'dashboard' && <Dashboard data={data} />}
