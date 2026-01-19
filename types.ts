@@ -1,5 +1,5 @@
 export type Level = 'primaria' | 'secundaria';
-export type Role = 'admin' | 'profesor' | 'control_estudios';
+export type Role = 'admin' | 'profesor' | 'control_estudios' | 'superintendente';
 
 export interface User {
   id: string;

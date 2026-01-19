@@ -7,6 +7,7 @@ export const INITIAL_USERS: User[] = [
   { id: '1', username: 'admin', name: 'Director General', role: 'admin' },
   { id: '2', username: 'profesor', name: 'Prof. Pedro Pérez', role: 'profesor' },
   { id: '3', username: 'control', name: 'Coord. María (Control)', role: 'control_estudios' },
+  { id: '4', username: 'super', name: 'Superintendente Regional', role: 'superintendente' },
 ];
 
 // Helper function to create subjects easily

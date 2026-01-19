@@ -19,7 +19,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     if (user) {
       onLogin(user);
     } else {
-      setError('Usuario no encontrado. Intente: admin, profesor, o control');
+      setError('Usuario no encontrado. Intente: admin, profesor, control o super');
     }
   };
 
@@ -68,10 +68,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
             <div className="mt-8 pt-6 border-t border-slate-100">
                 <p className="text-xs text-center text-slate-400 mb-3">Usuarios de demostración disponibles:</p>
-                <div className="flex justify-center gap-2 text-xs">
+                <div className="flex flex-wrap justify-center gap-2 text-xs">
                     <button onClick={() => setUsername('admin')} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-mono">admin</button>
                     <button onClick={() => setUsername('profesor')} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-mono">profesor</button>
                     <button onClick={() => setUsername('control')} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-mono">control</button>
+                    <button onClick={() => setUsername('super')} className="px-3 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded text-amber-700 font-mono">super</button>
                 </div>
             </div>
         </div>

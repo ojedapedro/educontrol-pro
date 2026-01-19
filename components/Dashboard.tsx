@@ -9,6 +9,7 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ data }) => {
   const totalStudents = data.students.length;
   const totalSubjects = data.subjects.length;
+  const currentUser = data.currentUser;
   
   // Calculate a mock "Global Average" just for display
   const totalGrades = data.grades.length;
@@ -26,8 +27,15 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-slate-800">Bienvenido, Director</h2>
-        <p className="text-slate-500 mt-1">Resumen general del periodo escolar 2024-2025</p>
+        <h2 className="text-3xl font-bold text-slate-800">
+            Bienvenido, {currentUser?.role === 'superintendente' ? 'Superintendente' : currentUser?.name}
+        </h2>
+        <p className="text-slate-500 mt-1">
+            {currentUser?.role === 'superintendente' 
+                ? 'Vista general de supervisión académica. Modo de Solo Lectura.' 
+                : 'Resumen general del periodo escolar 2024-2025'
+            }
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
