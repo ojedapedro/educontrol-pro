@@ -5,7 +5,7 @@ const uuid = () => Math.random().toString(36).substring(2, 9);
 
 // *** CONFIGURACIÓN DE BASE DE DATOS ***
 // Reemplaza esta URL con la que obtengas al implementar tu Apps Script
-export const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbw4uX4f9POX1SbM-lMvzC4QvvsY6XNCCfFFCIkGr7YuFN20yGmY4ESn89Jsq060Jw3x/exec'; 
+export const GOOGLE_SHEETS_API_URL = ''; 
 
 export const INITIAL_USERS: User[] = [
   { id: '1', username: 'admin', name: 'Director General', role: 'admin' },
@@ -61,12 +61,13 @@ export const INITIAL_SUBJECTS: Subject[] = [
 ];
 
 export const INITIAL_STUDENTS: Student[] = [
-  { id: uuid(), name: 'Sofía Martínez', level: 'primaria', grade: 1 },
-  { id: uuid(), name: 'Carlos Rodríguez', level: 'primaria', grade: 6 },
-  { id: uuid(), name: 'Ana Fernández', level: 'secundaria', grade: 1 },
-  { id: uuid(), name: 'Luis González', level: 'secundaria', grade: 3 },
-  { id: uuid(), name: 'María Pérez', level: 'secundaria', grade: 5 },
+  { id: uuid(), name: 'Sofía Martínez', level: 'primaria', grade: 1, section: 'A' },
+  { id: uuid(), name: 'Carlos Rodríguez', level: 'primaria', grade: 6, section: 'B' },
+  { id: uuid(), name: 'Ana Fernández', level: 'secundaria', grade: 1, section: 'A' },
+  { id: uuid(), name: 'Luis González', level: 'secundaria', grade: 3, section: 'C' },
+  { id: uuid(), name: 'María Pérez', level: 'secundaria', grade: 5, section: 'A' },
 ];
 
 export const GRADES_PRIMARIA = [1, 2, 3, 4, 5, 6];
 export const GRADES_SECUNDARIA = [1, 2, 3, 4, 5];
+export const SECTIONS_LIST = ['A', 'B', 'C', 'D', 'E', 'U']; // U = Unica

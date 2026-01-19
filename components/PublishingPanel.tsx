@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Student, Subject, GradeRecord, Level } from '../types';
-import { GRADES_PRIMARIA, GRADES_SECUNDARIA } from '../constants';
+import { GRADES_PRIMARIA, GRADES_SECUNDARIA, SECTIONS_LIST } from '../constants';
 import { getGradeLabel } from '../services/dataService';
 import { CheckCircle, Eye, Search, Filter, ShieldCheck, MessageSquare, X, Save } from 'lucide-react';
 
@@ -14,6 +14,7 @@ interface PublishingPanelProps {
 const PublishingPanel: React.FC<PublishingPanelProps> = ({ students, subjects, grades, onUpdateGrade }) => {
   const [level, setLevel] = useState<Level>('primaria');
   const [gradeYear, setGradeYear] = useState<number>(1);
+  const [section, setSection] = useState<string>('all'); // 'all' or 'A', 'B'...
   const [subjectId, setSubjectId] = useState<string>('all');
   const [period, setPeriod] = useState<number>(1);
   
@@ -28,8 +29,12 @@ const PublishingPanel: React.FC<PublishingPanelProps> = ({ students, subjects, g
 
   // Main Filter Logic
   const filteredRecords = useMemo(() => {
-    // 1. Get Students in this level/grade
-    const targetStudents = students.filter(s => s.level === level && s.grade === gradeYear);
+    // 1. Get Students in this level/grade AND section
+    const targetStudents = students.filter(s => {
+        const matchesBasic = s.level === level && s.grade === gradeYear;
+        const matchesSection = section === 'all' || s.section === section;
+        return matchesBasic && matchesSection;
+    });
     
     // 2. Map data for the table
     const records: Array<{
@@ -58,7 +63,7 @@ const PublishingPanel: React.FC<PublishingPanelProps> = ({ students, subjects, g
     });
 
     return records;
-  }, [students, grades, level, gradeYear, subjectId, period, availableSubjects]);
+  }, [students, grades, level, gradeYear, section, subjectId, period, availableSubjects]);
 
   const handleTogglePublish = (gradeRec: GradeRecord) => {
     onUpdateGrade({
@@ -128,11 +133,11 @@ const PublishingPanel: React.FC<PublishingPanelProps> = ({ students, subjects, g
             <Filter className="w-4 h-4" />
             Filtros de Búsqueda
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <select 
                 className="p-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
                 value={level}
-                onChange={(e) => { setLevel(e.target.value as Level); setGradeYear(1); setSubjectId('all'); }}
+                onChange={(e) => { setLevel(e.target.value as Level); setGradeYear(1); setSubjectId('all'); setSection('all'); }}
             >
                 <option value="primaria">Primaria</option>
                 <option value="secundaria">Secundaria</option>
@@ -144,6 +149,16 @@ const PublishingPanel: React.FC<PublishingPanelProps> = ({ students, subjects, g
             >
                 {(level === 'primaria' ? GRADES_PRIMARIA : GRADES_SECUNDARIA).map(g => (
                     <option key={g} value={g}>{getGradeLabel(level, g)}</option>
+                ))}
+            </select>
+            <select 
+                className="p-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+                value={section}
+                onChange={(e) => setSection(e.target.value)}
+            >
+                <option value="all">Todas Secc.</option>
+                {SECTIONS_LIST.map(s => (
+                    <option key={s} value={s}>Sección {s}</option>
                 ))}
             </select>
             <select 
@@ -208,7 +223,12 @@ const PublishingPanel: React.FC<PublishingPanelProps> = ({ students, subjects, g
                      <tbody className="divide-y divide-slate-100">
                          {filteredRecords.map((item, idx) => (
                              <tr key={`${item.student.id}-${item.subject.id}`} className="hover:bg-slate-50">
-                                 <td className="px-6 py-4 font-medium text-slate-700">{item.student.name}</td>
+                                 <td className="px-6 py-4 font-medium text-slate-700">
+                                     {item.student.name}
+                                     <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-500">
+                                         {item.student.section}
+                                     </span>
+                                 </td>
                                  <td className="px-6 py-4 text-slate-600">{item.subject.name}</td>
                                  <td className="px-6 py-4 font-mono font-bold text-slate-800">{item.gradeRec?.score}</td>
                                  <td className="px-6 py-4">

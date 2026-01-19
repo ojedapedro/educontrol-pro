@@ -82,7 +82,7 @@ const TopBar: React.FC<TopBarProps> = ({ students, onSelectStudent, currentUser 
                                 <div>
                                     <div className="text-sm font-medium text-slate-800">{student.name}</div>
                                     <div className="text-xs text-slate-500">
-                                        {getGradeLabel(student.level, student.grade)} • {student.level}
+                                        {getGradeLabel(student.level, student.grade)} • Sección "{student.section}" • {student.level}
                                     </div>
                                 </div>
                             </button>

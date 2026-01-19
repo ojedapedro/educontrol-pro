@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Student, Subject, GradeRecord, Level } from '../types';
-import { GRADES_PRIMARIA, GRADES_SECUNDARIA } from '../constants';
+import { GRADES_PRIMARIA, GRADES_SECUNDARIA, SECTIONS_LIST } from '../constants';
 import { getGradeLabel } from '../services/dataService';
 import { User, Search, AlertCircle, AlertTriangle } from 'lucide-react';
 
@@ -14,22 +14,26 @@ interface GradeEntryProps {
 const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onUpdateGrade }) => {
   const [level, setLevel] = useState<Level>('primaria');
   const [gradeYear, setGradeYear] = useState<number>(1);
+  const [section, setSection] = useState<string>('A');
   const [subjectId, setSubjectId] = useState<string>('');
   const [period, setPeriod] = useState<1 | 2 | 3>(1);
 
   // Local state to track inputs while typing allows us to show invalid states
-  // without committing them to the global store immediately if they are wrong.
   const [localInputs, setLocalInputs] = useState<Record<string, string>>({});
 
-  // Reset local inputs when context changes to avoid stale data visibility
+  // Reset local inputs when context changes
   useEffect(() => {
     setLocalInputs({});
-  }, [level, gradeYear, subjectId, period]);
+  }, [level, gradeYear, section, subjectId, period]);
 
-  // Filter students based on selection
+  // Filter students based on selection (Level, Grade, Section)
   const filteredStudents = useMemo(() => 
-    students.filter(s => s.level === level && s.grade === gradeYear),
-  [students, level, gradeYear]);
+    students.filter(s => 
+        s.level === level && 
+        s.grade === gradeYear && 
+        s.section === section
+    ),
+  [students, level, gradeYear, section]);
 
   // Filter subjects based on selection
   const filteredSubjects = useMemo(() => 
@@ -48,27 +52,14 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
   const handleScoreChange = (studentId: string, value: string) => {
     if (!subjectId) return;
 
-    // 1. Update local UI state immediately so the user sees what they type
     setLocalInputs(prev => ({ ...prev, [studentId]: value }));
     
-    // 2. Allow clearing the grade
-    if (value === '') {
-        // Find existing to preserve ID if needed, though for deletion/clearing we might handle differently.
-        // For now, we update it to 0 or we could add a logic to remove it. 
-        // Here we won't trigger update on empty string to avoid "0" popping up, 
-        // or we could save a special value. Let's assume empty string doesn't save/delete yet 
-        // OR we interpret empty as "remove grade". For safety, let's just return and keep it local.
-        return; 
-    }
+    if (value === '') return;
     
     const numValue = parseFloat(value);
-    
-    // 3. Validation Logic
     const isValid = !isNaN(numValue) && numValue >= 0 && numValue <= 20;
 
-    // 4. Only Save to Global Store if Valid
     if (isValid) {
-        // Find existing grade record
         const existingGrade = grades.find(
           g => g.studentId === studentId && g.subjectId === subjectId && g.period === period
         );
@@ -79,13 +70,11 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
           subjectId,
           score: numValue,
           period,
-          // If it exists, keep publish status, otherwise default to false (draft)
           isPublished: existingGrade ? existingGrade.isPublished : false
         };
 
         onUpdateGrade(newGrade);
     }
-    // If invalid, we do nothing (the localInputs state keeps the bad value visible and red)
   };
 
   const getStudentGrade = (studentId: string) => {
@@ -104,7 +93,7 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-5 gap-4">
         <div>
           <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Nivel</label>
           <select 
@@ -126,6 +115,19 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
           >
             {(level === 'primaria' ? GRADES_PRIMARIA : GRADES_SECUNDARIA).map(g => (
                 <option key={g} value={g}>{getGradeLabel(level, g)}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Sección</label>
+          <select 
+            className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:border-indigo-500"
+            value={section}
+            onChange={(e) => setSection(e.target.value)}
+          >
+            {SECTIONS_LIST.map(s => (
+                <option key={s} value={s}>{s}</option>
             ))}
           </select>
         </div>
@@ -166,7 +168,7 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
         <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
             <h3 className="font-semibold text-slate-700 flex items-center gap-2">
                 <User className="w-5 h-5 text-indigo-500"/>
-                Lista de Estudiantes
+                Lista de Estudiantes - Sección "{section}"
             </h3>
             <span className="text-sm text-slate-500">
                 {filteredStudents.length} Estudiante(s)
@@ -176,7 +178,7 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
         {filteredStudents.length === 0 ? (
              <div className="p-12 text-center text-slate-400">
                 <Search className="w-12 h-12 mx-auto mb-3 opacity-20"/>
-                <p>No se encontraron estudiantes para este grado.</p>
+                <p>No se encontraron estudiantes para este grado y sección.</p>
              </div>
         ) : filteredSubjects.length === 0 ? (
             <div className="p-12 text-center text-slate-400">
@@ -197,18 +199,15 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
                         {filteredStudents.map(student => {
                             const gradeRecord = getStudentGrade(student.id);
                             
-                            // Determine the value to show: Local typing state > Saved state > Empty
                             const inputValue = localInputs[student.id] !== undefined 
                                 ? localInputs[student.id] 
                                 : (gradeRecord ? String(gradeRecord.score) : '');
                                 
                             const isPublished = gradeRecord?.isPublished || false;
                             
-                            // Validation Check for Styling
                             const numVal = parseFloat(inputValue);
                             const isValid = inputValue === '' || (!isNaN(numVal) && numVal >= 0 && numVal <= 20);
                             
-                            // Determine styles based on value and validity
                             let inputClasses = "w-24 pl-3 pr-2 py-2 border rounded-lg focus:ring-2 focus:outline-none transition font-mono ";
                             
                             if (!isValid) {
@@ -225,7 +224,12 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
 
                             return (
                                 <tr key={student.id} className="hover:bg-slate-50/80 transition">
-                                    <td className="px-6 py-4 text-sm font-medium text-slate-700">{student.name}</td>
+                                    <td className="px-6 py-4 text-sm font-medium text-slate-700">
+                                        {student.name}
+                                        <span className="ml-2 text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                                            Sec. {student.section}
+                                        </span>
+                                    </td>
                                     <td className="px-6 py-4">
                                         <div className="relative">
                                             <input 

@@ -1,3 +1,4 @@
+
 export type Level = 'primaria' | 'secundaria';
 export type Role = 'admin' | 'profesor' | 'control_estudios' | 'superintendente';
 
@@ -20,6 +21,7 @@ export interface Student {
   name: string;
   level: Level;
   grade: number;
+  section: string; // New field: 'A', 'B', 'C', etc.
 }
 
 export interface GradeRecord {

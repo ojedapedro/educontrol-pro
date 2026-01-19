@@ -95,14 +95,14 @@ const Reports: React.FC<ReportsProps> = ({
         
         <div className="w-full md:w-auto">
             <select
-                className="w-full md:w-64 p-2.5 bg-white border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full md:w-80 p-2.5 bg-white border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none"
                 value={selectedStudentId}
                 onChange={(e) => { onStudentChange(e.target.value); setAiReport(null); }}
             >
                 <option value="">Seleccione un estudiante...</option>
                 {students.map(s => (
                     <option key={s.id} value={s.id}>
-                        {s.name} - {getGradeLabel(s.level, s.grade)} ({s.level})
+                        {s.name} - {getGradeLabel(s.level, s.grade)} "{s.section}" ({s.level})
                     </option>
                 ))}
             </select>
@@ -123,7 +123,7 @@ const Reports: React.FC<ReportsProps> = ({
                         <div>
                             <h3 className="text-2xl font-bold">{selectedStudent.name}</h3>
                             <p className="text-indigo-100 mt-1">
-                                Boletín Informativo - {getGradeLabel(selectedStudent.level, selectedStudent.grade)}
+                                Boletín Informativo - {getGradeLabel(selectedStudent.level, selectedStudent.grade)} Sección "{selectedStudent.section}"
                             </p>
                         </div>
                         <div className="bg-white/10 p-2 rounded-lg">
