@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, GraduationCap, BookOpen, FileText, School, CheckCircle, LogOut } from 'lucide-react';
+import { LayoutDashboard, GraduationCap, BookOpen, FileText, CheckCircle, LogOut } from 'lucide-react';
 import { ViewState, User, Role } from '../types';
 
 interface SidebarProps {
@@ -36,7 +36,11 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, currentUse
   return (
     <div className="w-64 bg-slate-900 text-white min-h-screen flex flex-col fixed left-0 top-0 z-10">
       <div className="p-6 flex items-center gap-3 border-b border-slate-800">
-        <School className="w-8 h-8 text-indigo-400" />
+        <img 
+            src="https://i.ibb.co/FbHJbvVT/images.png" 
+            alt="EduControl Logo" 
+            className="w-10 h-10 rounded-lg object-cover bg-white"
+        />
         <div>
           <h1 className="text-xl font-bold tracking-tight">EduControl</h1>
           <p className="text-xs text-slate-400 truncate w-32">{currentUser.name}</p>

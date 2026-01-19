@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import { INITIAL_USERS } from '../constants';
-import { School, ArrowRight, Lock } from 'lucide-react';
+import { ArrowRight, Lock } from 'lucide-react';
 
 interface LoginProps {
   onLogin: (user: User) => void;
@@ -28,7 +28,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full max-w-md flex flex-col">
         <div className="p-8 bg-indigo-600 text-white text-center">
             <div className="inline-flex p-3 bg-white/20 rounded-full mb-4">
-                <School className="w-8 h-8" />
+                <img 
+                    src="https://i.ibb.co/FbHJbvVT/images.png" 
+                    alt="EduControl Logo" 
+                    className="w-16 h-16 rounded-full object-cover bg-white"
+                />
             </div>
             <h1 className="text-2xl font-bold">EduControl</h1>
             <p className="text-indigo-200 text-sm mt-1">Gestión Académica Integral</p>
