@@ -171,11 +171,15 @@ const App: React.FC = () => {
         )}
 
         {/* Warning if URL is missing or demo mode is active */}
-        {(!GOOGLE_SHEETS_API_URL || new URLSearchParams(window.location.search).get('demo') === 'true') && !isLoading && (
+        {new URLSearchParams(window.location.search).get('demo') === 'true' ? (
             <div className="bg-amber-100 text-amber-800 px-8 py-2 text-xs text-center border-b border-amber-200">
                 ⚠️ Modo Demo Local: Trabajando sin conexión a base de datos (solo localStorage).
             </div>
-        )}
+        ) : !GOOGLE_SHEETS_API_URL && !isLoading ? (
+            <div className="bg-amber-100 text-amber-800 px-8 py-2 text-xs text-center border-b border-amber-200">
+                ⚠️ Modo Demo Local: Configure la URL de la API en <code>constants.ts</code> para conectar con Google Sheets.
+            </div>
+        ) : null}
 
         <main className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
            {currentView === 'dashboard' && <Dashboard data={data} />}
