@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ViewState, AppState, GradeRecord, Subject, User } from './types';
-import { getInitialData, saveDataLocally, fetchFromGoogleSheets, saveToGoogleSheets, getGradeLabel } from './services/dataService';
+import { getInitialData, saveDataLocally, fetchFromGoogleSheets, saveToGoogleSheets } from './services/dataService';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import GradeEntry from './components/GradeEntry';
@@ -29,7 +29,8 @@ const App: React.FC = () => {
   // Initial Data Fetch from Google Sheets
   useEffect(() => {
     const initData = async () => {
-        if (!GOOGLE_SHEETS_API_URL) return;
+        const isDemo = new URLSearchParams(window.location.search).get('demo') === 'true';
+        if (!GOOGLE_SHEETS_API_URL || isDemo) return;
         
         setIsLoading(true);
         const cloudData = await fetchFromGoogleSheets();
@@ -57,7 +58,8 @@ const App: React.FC = () => {
     saveDataLocally(data);
 
     // Debounce cloud save (2 seconds) to avoid spamming the sheet
-    if (!GOOGLE_SHEETS_API_URL) return;
+    const isDemo = new URLSearchParams(window.location.search).get('demo') === 'true';
+    if (!GOOGLE_SHEETS_API_URL || isDemo) return;
 
     const timeoutId = setTimeout(() => {
         setIsSyncing(true);
@@ -168,10 +170,10 @@ const App: React.FC = () => {
              </div>
         )}
 
-        {/* Warning if URL is missing */}
-        {!GOOGLE_SHEETS_API_URL && !isLoading && (
+        {/* Warning if URL is missing or demo mode is active */}
+        {(!GOOGLE_SHEETS_API_URL || new URLSearchParams(window.location.search).get('demo') === 'true') && !isLoading && (
             <div className="bg-amber-100 text-amber-800 px-8 py-2 text-xs text-center border-b border-amber-200">
-                ⚠️ Modo Demo Local: Configure la URL de la API en <code>constants.ts</code> para conectar con Google Sheets.
+                ⚠️ Modo Demo Local: Trabajando sin conexión a base de datos (solo localStorage).
             </div>
         )}
 

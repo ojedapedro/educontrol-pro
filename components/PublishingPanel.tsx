@@ -221,7 +221,7 @@ const PublishingPanel: React.FC<PublishingPanelProps> = ({ students, subjects, g
                          </tr>
                      </thead>
                      <tbody className="divide-y divide-slate-100">
-                         {filteredRecords.map((item, idx) => (
+                         {filteredRecords.map((item) => (
                              <tr key={`${item.student.id}-${item.subject.id}`} className="hover:bg-slate-50">
                                  <td className="px-6 py-4 font-medium text-slate-700">
                                      {item.student.name}

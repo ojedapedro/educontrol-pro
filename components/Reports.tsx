@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Student, Subject, GradeRecord, Level } from '../types';
-import { GRADES_PRIMARIA, GRADES_SECUNDARIA } from '../constants';
+import { Student, Subject, GradeRecord } from '../types';
 import { getGradeLabel } from '../services/dataService';
 import { generateStudentReport } from '../services/geminiService';
-import { FileText, Sparkles, Printer, Download, BarChart3 } from 'lucide-react';
+import { FileText, Sparkles, Printer, Download, BarChart3, FileSpreadsheet } from 'lucide-react';
 
 interface ReportsProps {
   students: Student[];
@@ -84,6 +83,34 @@ const Reports: React.FC<ReportsProps> = ({
         minValue: min
     };
   });
+
+  const handleExportCSV = () => {
+    if (!selectedStudent || reportCardData.length === 0) return;
+
+    const headers = ["Materia", "Lapso 1", "Lapso 2", "Lapso 3", "Definitiva", "Promedio", "Alta", "Baja"];
+    const csvContent = [
+        headers.join(","),
+        ...reportCardData.map(row => [
+            `"${row.subjectName}"`,
+            row.lapso1,
+            row.lapso2,
+            row.lapso3,
+            row.definitiva,
+            row.hasData ? row.avgValue.toFixed(2) : "-",
+            row.hasData ? row.maxValue : "-",
+            row.hasData ? row.minValue : "-"
+        ].join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Estadisticas_${selectedStudent.name.replace(/\s+/g, '_')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="space-y-6">
@@ -212,6 +239,17 @@ const Reports: React.FC<ReportsProps> = ({
                                 )}
                             </tbody>
                         </table>
+                    </div>
+                    <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
+                        <button
+                            onClick={handleExportCSV}
+                            disabled={reportCardData.filter(d => d.hasData).length === 0}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Descargar estadísticas en formato CSV compatible con Excel"
+                        >
+                            <FileSpreadsheet className="w-4 h-4 text-green-600" />
+                            Exportar CSV
+                        </button>
                     </div>
                 </div>
             </div>
