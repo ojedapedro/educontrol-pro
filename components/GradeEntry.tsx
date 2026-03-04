@@ -87,17 +87,17 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div>
-           <h2 className="text-2xl font-bold text-slate-800">Carga de Notas</h2>
-           <p className="text-slate-500">Registre las calificaciones. Estas quedarán pendientes de publicación por Control de Estudios.</p>
+           <h2 className="text-2xl font-bold text-white">Carga de Notas</h2>
+           <p className="text-slate-400">Registre las calificaciones. Estas quedarán pendientes de publicación por Control de Estudios.</p>
         </div>
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="bg-[#1e293b] p-4 rounded-xl shadow-sm border border-slate-700 grid grid-cols-1 md:grid-cols-5 gap-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Nivel</label>
+          <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Nivel</label>
           <select 
-            className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:border-indigo-500"
+            className="w-full p-2 bg-[#0f172a] border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
             value={level}
             onChange={(e) => { setLevel(e.target.value as Level); setGradeYear(1); }}
           >
@@ -107,9 +107,9 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Grado / Año</label>
+          <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Grado / Año</label>
           <select 
-            className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:border-indigo-500"
+            className="w-full p-2 bg-[#0f172a] border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
             value={gradeYear}
             onChange={(e) => setGradeYear(Number(e.target.value))}
           >
@@ -120,9 +120,9 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Sección</label>
+          <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Sección</label>
           <select 
-            className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:border-indigo-500"
+            className="w-full p-2 bg-[#0f172a] border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
             value={section}
             onChange={(e) => setSection(e.target.value)}
           >
@@ -133,9 +133,9 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Materia</label>
+          <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Materia</label>
           <select 
-            className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:border-indigo-500"
+            className="w-full p-2 bg-[#0f172a] border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
             value={subjectId}
             onChange={(e) => setSubjectId(e.target.value)}
             disabled={filteredSubjects.length === 0}
@@ -148,13 +148,13 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Lapso</label>
-          <div className="flex bg-slate-100 rounded-lg p-1">
+          <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Lapso</label>
+          <div className="flex bg-[#0f172a] rounded-lg p-1 border border-slate-700">
             {[1, 2, 3].map((l) => (
                 <button
                     key={l}
                     onClick={() => setPeriod(l as 1|2|3)}
-                    className={`flex-1 py-1.5 text-sm font-medium rounded transition ${period === l ? 'bg-white shadow text-indigo-700' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`flex-1 py-1.5 text-sm font-medium rounded transition ${period === l ? 'bg-[#1e293b] shadow text-blue-400' : 'text-slate-400 hover:text-slate-200'}`}
                 >
                     {l}º
                 </button>
@@ -164,13 +164,13 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
       </div>
 
       {/* Grade Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-            <h3 className="font-semibold text-slate-700 flex items-center gap-2">
-                <User className="w-5 h-5 text-indigo-500"/>
+      <div className="bg-[#1e293b] rounded-xl shadow-sm border border-slate-700 overflow-hidden">
+        <div className="p-6 border-b border-slate-700 bg-[#1e293b] flex justify-between items-center">
+            <h3 className="font-semibold text-white flex items-center gap-2">
+                <User className="w-5 h-5 text-blue-500"/>
                 Lista de Estudiantes - Sección "{section}"
             </h3>
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-slate-400">
                 {filteredStudents.length} Estudiante(s)
             </span>
         </div>
@@ -187,15 +187,15 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
         ) : (
             <div className="overflow-x-auto">
                 <table className="w-full">
-                    <thead className="bg-slate-50 border-b border-slate-200">
+                    <thead className="bg-[#0f172a] border-b border-slate-700">
                         <tr>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Nombre del Estudiante</th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-48">Calificación (0-20)</th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado de Publicación</th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado Académico</th>
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Nombre del Estudiante</th>
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider w-48">Calificación (0-20)</th>
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Estado de Publicación</th>
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Estado Académico</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-slate-700">
                         {filteredStudents.map(student => {
                             const gradeRecord = getStudentGrade(student.id);
                             
@@ -208,25 +208,25 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
                             const numVal = parseFloat(inputValue);
                             const isValid = inputValue === '' || (!isNaN(numVal) && numVal >= 0 && numVal <= 20);
                             
-                            let inputClasses = "w-24 pl-3 pr-2 py-2 border rounded-lg focus:ring-2 focus:outline-none transition font-mono ";
+                            let inputClasses = "w-24 pl-3 pr-2 py-2 border rounded-lg focus:ring-2 focus:outline-none transition font-mono bg-[#0f172a] ";
                             
                             if (!isValid) {
-                                inputClasses += "border-red-500 ring-2 ring-red-100 bg-red-50 text-red-900";
+                                inputClasses += "border-red-500 ring-2 ring-red-900/50 text-red-200";
                             } else if (isPublished) {
-                                inputClasses += "border-slate-300 opacity-70 bg-slate-100 cursor-not-allowed";
+                                inputClasses += "border-slate-700 opacity-70 bg-[#1e293b] cursor-not-allowed text-slate-400";
                             } else if (numVal >= 10) {
-                                inputClasses += "border-green-300 text-green-700 bg-green-50 focus:ring-green-200 focus:border-green-500";
+                                inputClasses += "border-green-700 text-green-300 focus:ring-green-900/50 focus:border-green-500";
                             } else if (inputValue !== '') {
-                                inputClasses += "border-red-300 text-red-700 bg-red-50 focus:ring-red-200 focus:border-red-500";
+                                inputClasses += "border-red-700 text-red-300 focus:ring-red-900/50 focus:border-red-500";
                             } else {
-                                inputClasses += "border-slate-300 focus:ring-indigo-500 focus:border-indigo-500";
+                                inputClasses += "border-slate-700 text-white focus:ring-blue-500 focus:border-blue-500";
                             }
 
                             return (
-                                <tr key={student.id} className="hover:bg-slate-50/80 transition">
-                                    <td className="px-6 py-4 text-sm font-medium text-slate-700">
+                                <tr key={student.id} className="hover:bg-[#2d3748]/30 transition">
+                                    <td className="px-6 py-4 text-sm font-medium text-slate-200">
                                         {student.name}
-                                        <span className="ml-2 text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                                        <span className="ml-2 text-xs text-slate-500 bg-[#0f172a] px-1.5 py-0.5 rounded">
                                             Sec. {student.section}
                                         </span>
                                     </td>
@@ -242,7 +242,7 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
                                                 title={!isValid ? "El valor debe estar entre 0 y 20" : isPublished ? "Nota publicada, no editable" : "Ingresar nota 0-20"}
                                             />
                                             {!isValid && (
-                                                <div className="absolute left-0 -bottom-5 text-[10px] text-red-600 font-bold flex items-center gap-1">
+                                                <div className="absolute left-0 -bottom-5 text-[10px] text-red-400 font-bold flex items-center gap-1">
                                                     <AlertTriangle className="w-3 h-3" />
                                                     Inválido (0-20)
                                                 </div>
@@ -252,27 +252,27 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
                                     <td className="px-6 py-4">
                                         {gradeRecord ? (
                                             isPublished ? (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-900/50 text-blue-200">
                                                     Publicada
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-900/50 text-amber-200">
                                                     Borrador (No visible)
                                                 </span>
                                             )
                                         ) : (
-                                            <span className="text-slate-400 text-xs italic">-</span>
+                                            <span className="text-slate-500 text-xs italic">-</span>
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
                                         {inputValue !== '' && isValid ? (
                                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                 Number(inputValue) >= 10 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                 Number(inputValue) >= 10 ? 'bg-green-900/50 text-green-200' : 'bg-red-900/50 text-red-200'
                                              }`}>
                                                  {Number(inputValue) >= 10 ? 'Aprobado' : 'Reprobado'}
                                              </span>
                                         ) : (
-                                            <span className="text-slate-400 text-xs italic">Pendiente</span>
+                                            <span className="text-slate-500 text-xs italic">Pendiente</span>
                                         )}
                                     </td>
                                 </tr>
@@ -283,7 +283,7 @@ const GradeEntry: React.FC<GradeEntryProps> = ({ students, subjects, grades, onU
             </div>
         )}
       </div>
-      <div className="flex items-start gap-2 text-xs text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200">
+      <div className="flex items-start gap-2 text-xs text-amber-300 bg-amber-900/20 p-3 rounded-lg border border-amber-900/50">
         <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
         <p>Nota: Las calificaciones marcadas como "Publicada" no pueden ser modificadas en esta pantalla. Contacte a Control de Estudios para correcciones.</p>
       </div>

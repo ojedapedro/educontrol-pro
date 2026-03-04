@@ -123,7 +123,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-[#0f172a] flex">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
           <div 
@@ -145,9 +145,9 @@ const App: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
         {/* Mobile Header */}
-        <div className="lg:hidden bg-white border-b border-slate-200 p-4 flex items-center justify-between">
-            <span className="font-bold text-slate-800">EduControl</span>
-            <button onClick={() => setSidebarOpen(true)} className="p-2 text-slate-600 hover:bg-slate-100 rounded">
+        <div className="lg:hidden bg-[#1e293b] border-b border-slate-700 p-4 flex items-center justify-between">
+            <span className="font-bold text-white">EduControPro</span>
+            <button onClick={() => setSidebarOpen(true)} className="p-2 text-slate-300 hover:bg-slate-700 rounded">
                 <Menu />
             </button>
         </div>
@@ -162,7 +162,7 @@ const App: React.FC = () => {
         {/* Sync Status Bar */}
         {(isSyncing || syncError || isLoading) && (
              <div className={`px-8 py-1 text-xs font-medium flex items-center justify-end gap-2 ${
-                 syncError ? 'bg-red-100 text-red-700' : 'bg-indigo-50 text-indigo-700'
+                 syncError ? 'bg-red-900/50 text-red-200' : 'bg-indigo-900/50 text-indigo-200'
              }`}>
                 {isLoading && <>Cargando datos de la nube...</>}
                 {isSyncing && <><RefreshCw className="w-3 h-3 animate-spin"/> Guardando en Google Sheets...</>}

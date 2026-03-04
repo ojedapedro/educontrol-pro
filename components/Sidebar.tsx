@@ -34,15 +34,15 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, currentUse
   const menuItems = getMenuItems(currentUser.role);
 
   return (
-    <div className="w-64 bg-slate-900 text-white min-h-screen flex flex-col fixed left-0 top-0 z-10">
-      <div className="p-6 flex items-center gap-3 border-b border-slate-800">
+    <div className="w-64 bg-[#1e293b] text-white min-h-screen flex flex-col fixed left-0 top-0 z-10">
+      <div className="p-6 flex items-center gap-3 border-b border-slate-700">
         <img 
             src="https://i.ibb.co/FbHJbvVT/images.png" 
             alt="EduControl Logo" 
             className="w-10 h-10 rounded-lg object-cover bg-white"
         />
         <div>
-          <h1 className="text-xl font-bold tracking-tight">EduControl</h1>
+          <h1 className="text-xl font-bold tracking-tight">EduControPro</h1>
           <p className="text-xs text-slate-400 truncate w-32">{currentUser.name}</p>
         </div>
       </div>
