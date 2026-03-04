@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Subject, Level } from '../types';
 import { GRADES_PRIMARIA, GRADES_SECUNDARIA } from '../constants';
 import { getGradeLabel } from '../services/dataService';
-import { Plus, Trash2, Book } from 'lucide-react';
+import { Plus, Trash2, Book, Search } from 'lucide-react';
 
 interface SubjectManagerProps {
   subjects: Subject[];
@@ -14,6 +14,7 @@ const SubjectManager: React.FC<SubjectManagerProps> = ({ subjects, onAddSubject,
   const [newSubjectName, setNewSubjectName] = useState('');
   const [selectedLevel, setSelectedLevel] = useState<Level>('primaria');
   const [selectedGrade, setSelectedGrade] = useState<number>(1);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleAdd = () => {
     if (!newSubjectName.trim()) return;
@@ -29,10 +30,13 @@ const SubjectManager: React.FC<SubjectManagerProps> = ({ subjects, onAddSubject,
     setNewSubjectName('');
   };
 
-  // Filter subjects for display based on current selection to make it cleaner
-  const filteredSubjects = subjects.filter(
-    s => s.level === selectedLevel && s.grade === selectedGrade
-  );
+  const filteredSubjects = useMemo(() => {
+    return subjects.filter(
+      s => s.level === selectedLevel && 
+           s.grade === selectedGrade &&
+           s.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [subjects, selectedLevel, selectedGrade, searchTerm]);
 
   return (
     <div className="space-y-6">
@@ -106,13 +110,20 @@ const SubjectManager: React.FC<SubjectManagerProps> = ({ subjects, onAddSubject,
 
         {/* List Panel */}
         <div className="lg:col-span-2 bg-[#1e293b] p-6 rounded-xl shadow-sm border border-slate-700">
-          <div className="flex justify-between items-center mb-4 pb-4 border-b border-slate-700">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 pb-4 border-b border-slate-700 gap-4">
              <h3 className="text-lg font-semibold text-white">
                 Materias Existentes
              </h3>
-             <span className="text-sm px-3 py-1 bg-blue-900/50 text-blue-200 rounded-full font-medium">
-                {getGradeLabel(selectedLevel, selectedGrade)}
-             </span>
+             <div className="relative w-full md:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                    type="text"
+                    placeholder="Buscar materia..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-[#0f172a] border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+             </div>
           </div>
 
           {filteredSubjects.length === 0 ? (
@@ -121,14 +132,17 @@ const SubjectManager: React.FC<SubjectManagerProps> = ({ subjects, onAddSubject,
               <p>No hay materias registradas para este grado.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredSubjects.map(subject => (
-                <div key={subject.id} className="group flex items-center justify-between p-4 rounded-lg border border-slate-700 hover:border-blue-500 hover:bg-[#2d3748] transition">
+                <div key={subject.id} className="bg-[#0f172a] p-4 rounded-xl border border-slate-700 hover:border-blue-500 transition flex items-center justify-between group">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-400">
                         <Book className="w-5 h-5" />
                     </div>
-                    <span className="font-medium text-slate-200">{subject.name}</span>
+                    <div>
+                        <p className="font-medium text-slate-200">{subject.name}</p>
+                        <p className="text-xs text-slate-500">{getGradeLabel(subject.level, subject.grade)}</p>
+                    </div>
                   </div>
                   <button
                     onClick={() => onDeleteSubject(subject.id)}
