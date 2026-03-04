@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Subject, Level } from '../types';
-import { GRADES_PRIMARIA, GRADES_SECUNDARIA } from '../constants';
+import { GRADES_PRIMARIA, GRADES_SECUNDARIA, INITIAL_USERS } from '../constants';
 import { getGradeLabel } from '../services/dataService';
 import { Plus, Trash2, Book, Search } from 'lucide-react';
 
@@ -14,7 +14,10 @@ const SubjectManager: React.FC<SubjectManagerProps> = ({ subjects, onAddSubject,
   const [newSubjectName, setNewSubjectName] = useState('');
   const [selectedLevel, setSelectedLevel] = useState<Level>('primaria');
   const [selectedGrade, setSelectedGrade] = useState<number>(1);
+  const [selectedTeacherId, setSelectedTeacherId] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
+
+  const teachers = useMemo(() => INITIAL_USERS.filter(u => u.role === 'profesor'), []);
 
   const handleAdd = () => {
     if (!newSubjectName.trim()) return;
@@ -24,10 +27,12 @@ const SubjectManager: React.FC<SubjectManagerProps> = ({ subjects, onAddSubject,
       name: newSubjectName,
       level: selectedLevel,
       grade: selectedGrade,
+      teacherId: selectedTeacherId || undefined
     };
 
     onAddSubject(newSubject);
     setNewSubjectName('');
+    setSelectedTeacherId('');
   };
 
   const filteredSubjects = useMemo(() => {
@@ -98,6 +103,20 @@ const SubjectManager: React.FC<SubjectManagerProps> = ({ subjects, onAddSubject,
               </select>
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Profesor Asignado</label>
+              <select
+                value={selectedTeacherId}
+                onChange={(e) => setSelectedTeacherId(e.target.value)}
+                className="w-full rounded-lg bg-[#0f172a] border-slate-700 border p-2 focus:ring-2 focus:ring-blue-500 outline-none text-white"
+              >
+                <option value="">Sin asignar</option>
+                {teachers.map(t => (
+                  <option key={t.id} value={t.id}>{t.name}</option>
+                ))}
+              </select>
+            </div>
+
             <button
               onClick={handleAdd}
               disabled={!newSubjectName.trim()}
@@ -133,26 +152,30 @@ const SubjectManager: React.FC<SubjectManagerProps> = ({ subjects, onAddSubject,
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredSubjects.map(subject => (
-                <div key={subject.id} className="bg-[#0f172a] p-4 rounded-xl border border-slate-700 hover:border-blue-500 transition flex items-center justify-between group">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-400">
-                        <Book className="w-5 h-5" />
+              {filteredSubjects.map(subject => {
+                const teacher = INITIAL_USERS.find(u => u.id === subject.teacherId);
+                return (
+                  <div key={subject.id} className="bg-[#0f172a] p-4 rounded-xl border border-slate-700 hover:border-blue-500 transition flex items-center justify-between group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-400">
+                          <Book className="w-5 h-5" />
+                      </div>
+                      <div>
+                          <p className="font-medium text-slate-200">{subject.name}</p>
+                          <p className="text-xs text-slate-500">{getGradeLabel(subject.level, subject.grade)}</p>
+                          {teacher && <p className="text-xs text-blue-400 mt-1">Prof: {teacher.name}</p>}
+                      </div>
                     </div>
-                    <div>
-                        <p className="font-medium text-slate-200">{subject.name}</p>
-                        <p className="text-xs text-slate-500">{getGradeLabel(subject.level, subject.grade)}</p>
-                    </div>
+                    <button
+                      onClick={() => onDeleteSubject(subject.id)}
+                      className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-900/20 rounded-full transition opacity-0 group-hover:opacity-100"
+                      title="Eliminar materia"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => onDeleteSubject(subject.id)}
-                    className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-900/20 rounded-full transition opacity-0 group-hover:opacity-100"
-                    title="Eliminar materia"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

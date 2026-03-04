@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, GraduationCap, BookOpen, FileText, CheckCircle, LogOut } from 'lucide-react';
+import { LayoutDashboard, GraduationCap, BookOpen, FileText, CheckCircle, LogOut, Users } from 'lucide-react';
 import { ViewState, User, Role } from '../types';
 
 interface SidebarProps {
@@ -23,6 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, currentUse
     if (role === 'control_estudios' || role === 'admin') {
         items.push({ id: 'publishing', label: 'Publicar Notas', icon: CheckCircle });
         items.push({ id: 'subjects', label: 'Gestión Materias', icon: BookOpen });
+        items.push({ id: 'teachers', label: 'Profesores', icon: Users });
     }
 
     // Everyone can see reports, but views might differ internally
@@ -55,6 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, currentUse
             <button
               key={item.id}
               onClick={() => onChangeView(item.id as ViewState)}
+              title={item.label}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
                 isActive
                   ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/50'
@@ -71,6 +73,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, currentUse
       <div className="p-4 border-t border-slate-800">
         <button 
             onClick={onLogout}
+            title="Cerrar Sesión"
             className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
         >
             <LogOut className="w-5 h-5" />

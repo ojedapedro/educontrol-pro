@@ -15,6 +15,7 @@ export interface Subject {
   name: string;
   level: Level;
   grade: number; // 1-6 for Primaria, 1-5 for Secundaria
+  teacherId?: string; // New field
 }
 
 export interface Student {
@@ -42,4 +43,4 @@ export interface AppState {
   currentUser: User | null;
 }
 
-export type ViewState = 'dashboard' | 'grades' | 'subjects' | 'reports' | 'publishing';
+export type ViewState = 'dashboard' | 'grades' | 'subjects' | 'reports' | 'publishing' | 'teachers';

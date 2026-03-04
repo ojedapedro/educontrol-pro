@@ -7,6 +7,7 @@ import GradeEntry from './components/GradeEntry';
 import SubjectManager from './components/SubjectManager';
 import Reports from './components/Reports';
 import PublishingPanel from './components/PublishingPanel';
+import TeachersView from './components/TeachersView';
 import Login from './components/Login';
 import TopBar from './components/TopBar';
 import { Menu, RefreshCw, CloudOff } from 'lucide-react';
@@ -207,6 +208,12 @@ const App: React.FC = () => {
                 subjects={data.subjects}
                 onAddSubject={handleAddSubject}
                 onDeleteSubject={handleDeleteSubject}
+             />
+           )}
+           
+           {currentView === 'teachers' && (
+             <TeachersView 
+                subjects={data.subjects}
              />
            )}
            
