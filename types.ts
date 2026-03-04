@@ -20,6 +20,7 @@ export interface Subject {
 
 export interface Student {
   id: string;
+  cedula: string; // New field
   name: string;
   level: Level;
   grade: number;

@@ -12,16 +12,18 @@ interface StudentManagerProps {
 
 const StudentManager: React.FC<StudentManagerProps> = ({ students, onAddStudent, onDeleteStudent }) => {
   const [newName, setNewName] = useState('');
+  const [newCedula, setNewCedula] = useState('');
   const [selectedLevel, setSelectedLevel] = useState<Level>('primaria');
   const [selectedGrade, setSelectedGrade] = useState<number>(1);
   const [selectedSection, setSelectedSection] = useState<string>('A');
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleAdd = () => {
-    if (!newName.trim()) return;
+    if (!newName.trim() || !newCedula.trim()) return;
 
     const newStudent: Student = {
       id: Math.random().toString(36).substring(2, 9),
+      cedula: newCedula,
       name: newName,
       level: selectedLevel,
       grade: selectedGrade,
@@ -30,6 +32,7 @@ const StudentManager: React.FC<StudentManagerProps> = ({ students, onAddStudent,
 
     onAddStudent(newStudent);
     setNewName('');
+    setNewCedula('');
   };
 
   const filteredStudents = useMemo(() => {
@@ -37,7 +40,7 @@ const StudentManager: React.FC<StudentManagerProps> = ({ students, onAddStudent,
       s => s.level === selectedLevel && 
            s.grade === selectedGrade &&
            s.section === selectedSection &&
-           s.name.toLowerCase().includes(searchTerm.toLowerCase())
+           (s.name.toLowerCase().includes(searchTerm.toLowerCase()) || s.cedula.includes(searchTerm))
     );
   }, [students, selectedLevel, selectedGrade, selectedSection, searchTerm]);
 
@@ -59,6 +62,16 @@ const StudentManager: React.FC<StudentManagerProps> = ({ students, onAddStudent,
           </h3>
           
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Cédula de Identidad</label>
+              <input
+                type="text"
+                value={newCedula}
+                onChange={(e) => setNewCedula(e.target.value)}
+                placeholder="Ej. 12345678"
+                className="w-full rounded-lg bg-[#0f172a] border-slate-700 border p-2 focus:ring-2 focus:ring-blue-500 outline-none transition text-white"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Nombre Completo</label>
               <input
@@ -117,7 +130,7 @@ const StudentManager: React.FC<StudentManagerProps> = ({ students, onAddStudent,
 
             <button
               onClick={handleAdd}
-              disabled={!newName.trim()}
+              disabled={!newName.trim() || !newCedula.trim()}
               className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
               Registrar Estudiante
@@ -135,7 +148,7 @@ const StudentManager: React.FC<StudentManagerProps> = ({ students, onAddStudent,
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                     type="text"
-                    placeholder="Buscar estudiante..."
+                    placeholder="Buscar por nombre o cédula..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 bg-[#0f172a] border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none"
@@ -158,7 +171,7 @@ const StudentManager: React.FC<StudentManagerProps> = ({ students, onAddStudent,
                     </div>
                     <div>
                         <p className="font-medium text-slate-200">{student.name}</p>
-                        <p className="text-xs text-slate-500">Sección {student.section}</p>
+                        <p className="text-xs text-slate-500">Cédula: {student.cedula} | Sección {student.section}</p>
                     </div>
                   </div>
                   <button

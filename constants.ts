@@ -62,11 +62,11 @@ export const INITIAL_SUBJECTS: Subject[] = [
 ];
 
 export const INITIAL_STUDENTS: Student[] = [
-  { id: uuid(), name: 'Sofía Martínez', level: 'primaria', grade: 1, section: 'A' },
-  { id: uuid(), name: 'Carlos Rodríguez', level: 'primaria', grade: 6, section: 'B' },
-  { id: uuid(), name: 'Ana Fernández', level: 'secundaria', grade: 1, section: 'A' },
-  { id: uuid(), name: 'Luis González', level: 'secundaria', grade: 3, section: 'C' },
-  { id: uuid(), name: 'María Pérez', level: 'secundaria', grade: 5, section: 'A' },
+  { id: uuid(), cedula: '12345678', name: 'Sofía Martínez', level: 'primaria', grade: 1, section: 'A' },
+  { id: uuid(), cedula: '87654321', name: 'Carlos Rodríguez', level: 'primaria', grade: 6, section: 'B' },
+  { id: uuid(), cedula: '11223344', name: 'Ana Fernández', level: 'secundaria', grade: 1, section: 'A' },
+  { id: uuid(), cedula: '44332211', name: 'Luis González', level: 'secundaria', grade: 3, section: 'C' },
+  { id: uuid(), cedula: '55667788', name: 'María Pérez', level: 'secundaria', grade: 5, section: 'A' },
 ];
 
 export const GRADES_PRIMARIA = [1, 2, 3, 4, 5, 6];
