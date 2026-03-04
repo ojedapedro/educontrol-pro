@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import { INITIAL_USERS } from '../constants';
+import { motion } from 'motion/react';
+import { BookOpen, GraduationCap } from 'lucide-react';
 
 interface LoginProps {
   onLogin: (user: User) => void;
@@ -29,24 +31,49 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   return (
     <div className="min-h-screen bg-[#0f172a] flex">
       {/* Left Side: Decoration */}
-      <div className="hidden lg:flex w-1/2 flex-col items-center justify-center p-12 relative">
-        <img src="https://i.ibb.co/FbHJbvVT/images.png" alt="Logo" className="w-24 h-24 mb-12" />
-        <div className="relative">
-            <div className="w-80 h-80 bg-blue-500 rounded-3xl flex items-center justify-center">
-                {/* Placeholder for 3D illustration */}
-                <span className="text-white text-6xl">👤</span>
+      <div className="hidden lg:flex w-1/2 flex-col items-center justify-center p-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-indigo-900/20" />
+        
+        <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="relative z-10"
+        >
+            <div className="w-80 h-80 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/20 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+                <img src="https://i.ibb.co/Nnp24NFT/pngtree-boy-going-to-school-clipart-png-image-17881122.png" alt="Estudiante" className="w-48 h-48 object-contain z-10" referrerPolicy="no-referrer" />
             </div>
+            
             {/* Floating Cards */}
-            <div className="absolute -left-12 top-10 bg-white p-4 rounded-xl shadow-lg">Ingresos</div>
-            <div className="absolute -right-12 bottom-10 bg-white p-4 rounded-xl shadow-lg">Alumnos</div>
-        </div>
+            <motion.div 
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -left-12 top-10 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl shadow-xl text-white flex items-center gap-2"
+            >
+                <BookOpen className="w-5 h-5 text-blue-300" /> Ingresos
+            </motion.div>
+            
+            <motion.div 
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -right-12 bottom-10 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl shadow-xl text-white flex items-center gap-2"
+            >
+                <GraduationCap className="w-5 h-5 text-indigo-300" /> Alumnos
+            </motion.div>
+        </motion.div>
       </div>
 
       {/* Right Side: Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#1e293b]">
         <div className="w-full max-w-md">
-            <h1 className="text-4xl font-bold text-white mb-2">EduControPro</h1>
-            <p className="text-slate-400 mb-8">Sistema de Gestión Administrativa Escolar</p>
+            <div className="flex items-center gap-4 mb-8">
+                <img src="https://i.ibb.co/FbHJbvVT/images.png" alt="Logo" className="w-16 h-16" />
+                <div>
+                    <h1 className="text-3xl font-bold text-white">EduControPro</h1>
+                    <p className="text-slate-400">Sistema de Gestión Administrativa Escolar</p>
+                </div>
+            </div>
             
             <form onSubmit={handleLogin} className="space-y-6">
                 <div>
