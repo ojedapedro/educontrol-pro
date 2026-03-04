@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, GraduationCap, BookOpen, FileText, CheckCircle, LogOut, Users } from 'lucide-react';
+import { LayoutDashboard, GraduationCap, BookOpen, FileText, CheckCircle, LogOut, Users, User as UserIcon } from 'lucide-react';
 import { ViewState, User, Role } from '../types';
 
 interface SidebarProps {
@@ -24,6 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, currentUse
         items.push({ id: 'publishing', label: 'Publicar Notas', icon: CheckCircle });
         items.push({ id: 'subjects', label: 'Gestión Materias', icon: BookOpen });
         items.push({ id: 'teachers', label: 'Profesores', icon: Users });
+        items.push({ id: 'students', label: 'Estudiantes', icon: UserIcon });
     }
 
     // Everyone can see reports, but views might differ internally

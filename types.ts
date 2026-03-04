@@ -43,4 +43,4 @@ export interface AppState {
   currentUser: User | null;
 }
 
-export type ViewState = 'dashboard' | 'grades' | 'subjects' | 'reports' | 'publishing' | 'teachers';
+export type ViewState = 'dashboard' | 'grades' | 'subjects' | 'reports' | 'publishing' | 'teachers' | 'students';

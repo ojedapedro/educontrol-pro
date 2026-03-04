@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ViewState, AppState, GradeRecord, Subject, User } from './types';
+import { ViewState, AppState, GradeRecord, Subject, User, Student } from './types';
 import { getInitialData, saveDataLocally, fetchFromGoogleSheets, saveToGoogleSheets } from './services/dataService';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import GradeEntry from './components/GradeEntry';
 import SubjectManager from './components/SubjectManager';
+import StudentManager from './components/StudentManager';
 import Reports from './components/Reports';
 import PublishingPanel from './components/PublishingPanel';
 import TeachersView from './components/TeachersView';
@@ -102,6 +103,21 @@ const App: React.FC = () => {
         ...prev,
         subjects: prev.subjects.filter(s => s.id !== id),
         grades: prev.grades.filter(g => g.subjectId !== id)
+    }));
+  };
+
+  const handleAddStudent = (student: Student) => {
+    setData(prev => ({
+        ...prev,
+        students: [...prev.students, student]
+    }));
+  };
+
+  const handleDeleteStudent = (id: string) => {
+    setData(prev => ({
+        ...prev,
+        students: prev.students.filter(s => s.id !== id),
+        grades: prev.grades.filter(g => g.studentId !== id)
     }));
   };
 
@@ -208,6 +224,14 @@ const App: React.FC = () => {
                 subjects={data.subjects}
                 onAddSubject={handleAddSubject}
                 onDeleteSubject={handleDeleteSubject}
+             />
+           )}
+           
+           {currentView === 'students' && (
+             <StudentManager 
+                students={data.students}
+                onAddStudent={handleAddStudent}
+                onDeleteStudent={handleDeleteStudent}
              />
            )}
            
