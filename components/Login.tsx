@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import { INITIAL_USERS } from '../constants';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { BookOpen, GraduationCap } from 'lucide-react';
 
 interface LoginProps {
