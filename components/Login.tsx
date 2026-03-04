@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import { INITIAL_USERS } from '../constants';
-import { ArrowRight, Lock } from 'lucide-react';
 
 interface LoginProps {
   onLogin: (user: User) => void;
@@ -9,76 +8,87 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple mock authentication based on predefined users
     const user = INITIAL_USERS.find(u => u.username === username.toLowerCase().trim());
     
     if (user) {
+      if (user.password && user.password !== password) {
+        setError('Contraseña incorrecta.');
+        return;
+      }
       onLogin(user);
     } else {
-      setError('Usuario no encontrado. Intente: admin, profesor, control o super');
+      setError('Usuario no encontrado.');
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full max-w-md flex flex-col">
-        <div className="p-8 bg-indigo-600 text-white text-center">
-            <div className="inline-flex p-3 bg-white/20 rounded-full mb-4">
-                <img 
-                    src="https://i.ibb.co/FbHJbvVT/images.png" 
-                    alt="EduControl Logo" 
-                    className="w-16 h-16 rounded-full object-cover bg-white"
-                />
+    <div className="min-h-screen bg-[#0f172a] flex">
+      {/* Left Side: Decoration */}
+      <div className="hidden lg:flex w-1/2 flex-col items-center justify-center p-12 relative">
+        <img src="https://i.ibb.co/FbHJbvVT/images.png" alt="Logo" className="w-24 h-24 mb-12" />
+        <div className="relative">
+            <div className="w-80 h-80 bg-blue-500 rounded-3xl flex items-center justify-center">
+                {/* Placeholder for 3D illustration */}
+                <span className="text-white text-6xl">👤</span>
             </div>
-            <h1 className="text-2xl font-bold">EduControl</h1>
-            <p className="text-indigo-200 text-sm mt-1">Gestión Académica Integral</p>
+            {/* Floating Cards */}
+            <div className="absolute -left-12 top-10 bg-white p-4 rounded-xl shadow-lg">Ingresos</div>
+            <div className="absolute -right-12 bottom-10 bg-white p-4 rounded-xl shadow-lg">Alumnos</div>
         </div>
-        
-        <div className="p-8">
+      </div>
+
+      {/* Right Side: Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#1e293b]">
+        <div className="w-full max-w-md">
+            <h1 className="text-4xl font-bold text-white mb-2">EduControPro</h1>
+            <p className="text-slate-400 mb-8">Sistema de Gestión Administrativa Escolar</p>
+            
             <form onSubmit={handleLogin} className="space-y-6">
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Usuario</label>
-                    <div className="relative">
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => { setUsername(e.target.value); setError(''); }}
-                            className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-                            placeholder="Ingrese su usuario"
-                            autoFocus
-                        />
-                        <Lock className="w-5 h-5 text-slate-400 absolute left-3 top-3.5" />
-                    </div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Correo Electrónico</label>
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => { setUsername(e.target.value); setError(''); }}
+                        className="w-full px-4 py-3 bg-[#0f172a] border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                        placeholder="usuario@colegio.com"
+                    />
+                </div>
+                
+                <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Contraseña</label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => { setPassword(e.target.value); setError(''); }}
+                        className="w-full px-4 py-3 bg-[#0f172a] border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                        placeholder="••••••••"
+                    />
                 </div>
 
-                {error && (
-                    <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg">
-                        {error}
-                    </div>
-                )}
+                <div className="flex items-center justify-between text-sm">
+                    <label className="flex items-center text-slate-400">
+                        <input type="checkbox" className="mr-2" /> Recordarme
+                    </label>
+                    <a href="#" className="text-blue-400 hover:underline">¿Olvidó su contraseña?</a>
+                </div>
 
-                <button
-                    type="submit"
-                    className="w-full bg-slate-900 text-white py-3 rounded-lg font-medium hover:bg-slate-800 transition flex items-center justify-center gap-2"
-                >
-                    Ingresar al Sistema
-                    <ArrowRight className="w-4 h-4" />
+                {error && <div className="p-3 bg-red-900/50 text-red-200 text-sm rounded-lg">{error}</div>}
+
+                <button type="submit" className="w-full bg-indigo-600 text-white py-3 rounded-xl font-medium hover:bg-indigo-700 transition">
+                    Iniciar Sesión
+                </button>
+                <button type="button" className="w-full bg-slate-700 text-white py-3 rounded-xl font-medium hover:bg-slate-600 transition">
+                    Modo Demo
                 </button>
             </form>
-
-            <div className="mt-8 pt-6 border-t border-slate-100">
-                <p className="text-xs text-center text-slate-400 mb-3">Usuarios de demostración disponibles:</p>
-                <div className="flex flex-wrap justify-center gap-2 text-xs">
-                    <button onClick={() => setUsername('admin')} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-mono">admin</button>
-                    <button onClick={() => setUsername('profesor')} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-mono">profesor</button>
-                    <button onClick={() => setUsername('control')} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-mono">control</button>
-                    <button onClick={() => setUsername('super')} className="px-3 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded text-amber-700 font-mono">super</button>
-                </div>
-            </div>
+            
+            <p className="text-center text-slate-500 text-xs mt-8">v1.2 | AdminPro School Management</p>
         </div>
       </div>
     </div>

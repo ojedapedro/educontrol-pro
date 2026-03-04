@@ -7,6 +7,7 @@ export interface User {
   username: string;
   name: string;
   role: Role;
+  password?: string;
 }
 
 export interface Subject {

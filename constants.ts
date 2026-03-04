@@ -5,13 +5,14 @@ const uuid = () => Math.random().toString(36).substring(2, 9);
 
 // *** CONFIGURACIÓN DE BASE DE DATOS ***
 // Reemplaza esta URL con la que obtengas al implementar tu Apps Script
-export const GOOGLE_SHEETS_API_URL = ''; 
+export const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbw4uX4f9POX1SbM-lMvzC4QvvsY6XNCCfFFCIkGr7YuFN20yGmY4ESn89Jsq060Jw3x/exec'; 
 
 export const INITIAL_USERS: User[] = [
   { id: '1', username: 'admin', name: 'Director General', role: 'admin' },
   { id: '2', username: 'profesor', name: 'Prof. Pedro Pérez', role: 'profesor' },
   { id: '3', username: 'control', name: 'Coord. María (Control)', role: 'control_estudios' },
   { id: '4', username: 'super', name: 'Superintendente Regional', role: 'superintendente' },
+  { id: '5', username: 'analistadedatosnova@gmail.com', name: 'Analista de Datos', role: 'admin', password: 'Gene.2302' },
 ];
 
 // Helper function to create subjects easily
