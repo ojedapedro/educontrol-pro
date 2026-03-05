@@ -5,7 +5,7 @@ const uuid = () => Math.random().toString(36).substring(2, 9);
 
 // *** CONFIGURACIÓN DE BASE DE DATOS ***
 // Reemplaza esta URL con la que obtengas al implementar tu Apps Script
-export const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbwskTJ1uAwmC2d5FIQdNEzLb9K7MPrayrD3WvCfIWGKvPgIj-eP9UdsRT6nziJQBdiW/exec'; 
+export const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzPtS3CZ8inT7E6FTjVN8RDq_R-jX7gYYjVf9oe_Ns_nd-DauKWnfb-cD2-X1SRQkH1/exec'; 
 
 export const INITIAL_USERS: User[] = [
   { id: '1', username: 'admin', name: 'Director General', role: 'admin' },
